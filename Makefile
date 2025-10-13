@@ -13,7 +13,11 @@ OPENOCD ?= openocd
 CUBEIDE_SCRIPTS := $(firstword $(wildcard /opt/st/stm32cubeide_*/plugins/com.st.stm32cube.ide.mcu.debug.openocd_*/resources/openocd/st_scripts))
 OPENOCD_SCRIPT_DIR ?= $(CUBEIDE_SCRIPTS)
 OPENOCD_S_ARG := $(if $(OPENOCD_SCRIPT_DIR),-s $(OPENOCD_SCRIPT_DIR),)
-GDB ?= arm-none-eabi-gdb
+GDB_DEFAULT := $(firstword $(shell command -v gdb-multiarch 2>/dev/null))
+ifeq ($(GDB_DEFAULT),)
+GDB_DEFAULT := $(firstword $(shell command -v arm-none-eabi-gdb 2>/dev/null))
+endif
+GDB ?= $(if $(GDB_DEFAULT),$(GDB_DEFAULT),gdb-multiarch)
 OBJCOPY ?= arm-none-eabi-objcopy
 BEAR ?= bear
 
